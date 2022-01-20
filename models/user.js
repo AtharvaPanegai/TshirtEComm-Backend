@@ -45,7 +45,7 @@ const userSchema = new Schema({
   },
 });
 
-// encrypt password before save
+// encrypt password before save -HOOks
 // we don't want to encrypt the password again and again everytime any field changes will be using isModified function to solve this problem
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -53,5 +53,10 @@ userSchema.pre("save", async function (next) {
   }
   this.password = await bcrypt.hash(this.password, 10);
 });
+
+// validate passwords with the db
+userSchema.methods.isValidatedPassword = async function (usersendPassword) {
+  return await bcrypt.compare(usersendPassword, this.password);
+};
 
 module.exports = mongoose.model("User", userSchema);
