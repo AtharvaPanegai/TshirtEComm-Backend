@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const Validator = require("validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new Schema({
   name: {
@@ -57,6 +58,14 @@ userSchema.pre("save", async function (next) {
 // validate passwords with the db
 userSchema.methods.isValidatedPassword = async function (usersendPassword) {
   return await bcrypt.compare(usersendPassword, this.password);
+};
+
+// create and return jwt token
+// whenever we save anything in mongoDB it generates an Id for us
+userSchema.methods.getJwtToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRY,
+  });
 };
 
 module.exports = mongoose.model("User", userSchema);
