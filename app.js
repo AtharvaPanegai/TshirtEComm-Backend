@@ -19,7 +19,15 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // for cookies and file Middlewares
 app.use(cookieParser());
-app.use(fileUpload());
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+);
+
+// temp check
+app.set("view engine", "ejs");
 
 // mogran middleware
 app.use(morgan("tiny"));
@@ -30,6 +38,10 @@ const user = require("./routes/user");
 // router middleware
 app.use("/api/v1", home);
 app.use("/api/v1", user);
+
+app.get("/signupTest",(req,res)=>{
+    res.render("signupTest")
+})
 
 // export app js
 module.exports = app;
