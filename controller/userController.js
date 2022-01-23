@@ -57,11 +57,21 @@ exports.login = BigPromise(async (req, res, next) => {
   const isPasswordCorrect = user.isPasswordValid(password);
 
   // if the password is not correct
-  if(!isPasswordCorrect){
-    return next(new CustomError("Enter Correct Password",400));
+  if (!isPasswordCorrect) {
+    return next(new CustomError("Enter Correct Password", 400));
   }
 
   // sending Token
   cookieToken(user, res);
+});
 
+exports.logout = BigPromise(async (req, res, next) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+  res.status(200).json({
+    success: true,
+    message: "Logout Success",
+  });
 });
