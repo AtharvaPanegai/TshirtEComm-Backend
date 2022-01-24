@@ -5,6 +5,7 @@ const BigPromise = require("../middlewares/bigPromise");
 const CustomError = require("../utils/customError");
 const cookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
+const mailHelper = require("../utils/emailHelper");
 
 exports.signup = BigPromise(async (req, res, next) => {
   let photoUploadResult;
@@ -74,4 +75,43 @@ exports.logout = BigPromise(async (req, res, next) => {
     success: true,
     message: "Logout Success",
   });
+});
+
+exports.forgotPassword = BigPromise(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new CustomError("Email not found", 400));
+  }
+
+  const forgotToken = user.getForgotPasswordToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  const myUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/password/reset/${forgotToken}`;
+
+  const message = `Copy paste this link in and press enter \n\n ${myUrl}`;
+
+  try {
+    await mailHelper({
+      email: user.email,
+      subject: "Atharva Password Reset Email",
+      message,
+    });
+
+    res.status(200).json({
+      success:true,
+      message:"Email sent successfully"
+    })
+
+  } catch (error) {
+    user.forgotPasswordExpiry = undefined;
+    user.forgotPasswordToken = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new Error(error.message, 500));
+  }
 });
