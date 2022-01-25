@@ -147,5 +147,5 @@ exports.passwordReset = BigPromise(async (req, res, next) => {
   user.forgotPasswordExpiry = undefined;
   await user.save();
 
-  cookieToken(user, res);
+  cookieToken(user, res);                                                 
 });
