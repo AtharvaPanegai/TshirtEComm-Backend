@@ -274,6 +274,15 @@ exports.adminUpdateOneUserDetail = BigPromise(async (req, res, next) => {
   });
 });
 
+exports.adminDeleteSingleUserById = BigPromise(async (req, res, next) => {
+  const user = await User.deleteOne({ _id: req.params.id });
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
 exports.managerAllUsers = BigPromise(async (req, res, next) => {
   const users = await User.find({ role: "user" });
 
