@@ -285,7 +285,7 @@ exports.adminDeleteSingleUserById = BigPromise(async (req, res, next) => {
   res.status(200).json({
     success: true,
     user,
-    photoRes
+    photoRes,
   });
 });
 
@@ -297,3 +297,5 @@ exports.managerAllUsers = BigPromise(async (req, res, next) => {
     users,
   });
 });
+
+
