@@ -248,6 +248,32 @@ exports.admingetSingleUser = BigPromise(async (req, res, next) => {
   });
 });
 
+exports.adminUpdateOneUserDetail = BigPromise(async (req, res, next) => {
+  // check if there's email and name in the body
+  if (!req.body.name || !req.body.email) {
+    return next(
+      new CustomError("Email or name should be passed to change", 400)
+    );
+  }
+
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+
+  const user = await User.findByIdAndUpdate(req.params.id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
 exports.managerAllUsers = BigPromise(async (req, res, next) => {
   const users = await User.find({ role: "user" });
 
