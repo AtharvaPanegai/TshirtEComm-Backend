@@ -175,3 +175,62 @@ exports.changePassword = BigPromise(async (req, res, next) => {
 
   cookieToken(user, res);
 });
+
+exports.updateUserDetails = BigPromise(async (req, res, next) => {
+  // check if there's email and name in the body
+  if (!req.body.name || !req.body.email) {
+    return next(
+      new CustomError("Email or name should be passed to change", 400)
+    );
+  }
+
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  // if the user has sent the photos as well while uploading
+  if (req.files) {
+    const user = await User.findById(req.user.id);
+    // find the image id
+    const imageId = user.photo.id;
+    // destroy the image of the user in cloudinary
+    const res = await cloudinary.v2.uploader.destroy(imageId);
+    // now upload the image
+    let photo = req.files.photo;
+    photoUploadResult = await cloudinary.v2.uploader.upload(
+      photo.tempFilePath,
+      {
+        folder: "users",
+        width: 150,
+        crop: "scale",
+      }
+    );
+
+    newData.photo = {
+      id: result.public_id,
+      secure_url: result.secure_url,
+    };
+  }
+
+  const user = await User.findByIdAndUpdate(req.user.id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+exports.adminAllUsers = BigPromise(async (req, res, next) => {
+  // find everyone
+  const users = await User.find({});
+
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
