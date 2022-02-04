@@ -87,9 +87,9 @@ exports.forgotPassword = BigPromise(async (req, res, next) => {
   if (!user) {
     return next(new CustomError("Email not found", 400));
   }
-// get token from user model
+  // get token from user model
   const forgotToken = user.getForgotPasswordToken();
-// save user fields in db
+  // save user fields in db
   await user.save({ validateBeforeSave: false });
   // creating a url
   const myUrl = `${req.protocol}://${req.get(
@@ -147,16 +147,31 @@ exports.passwordReset = BigPromise(async (req, res, next) => {
   user.forgotPasswordExpiry = undefined;
   await user.save();
 
-  cookieToken(user, res);                                                 
+  cookieToken(user, res);
 });
 
-exports.getLoggedInUserDetails = BigPromise(async(req,res,next)=>{
-
-  const user = await User.findById(req.user.id)
+exports.getLoggedInUserDetails = BigPromise(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
 
   res.status(200).json({
-    success:true,
+    success: true,
     user,
-  })
+  });
+});
 
-})
+exports.changePassword = BigPromise(async (req, res, next) => {
+  const userId = req.user.id;
+
+  const user = await User.findById(userId).select("+password");
+
+  const isCorrectOldPassword = await user.isPasswordValid(req.body.oldPassword);
+  if (!isCorrectOldPassword) {
+    return next(new CustomError("Old password is inCorrect", 400));
+  }
+
+  user.password = req.body.newPassword;
+
+  await user.save();
+
+  cookieToken(user, res);
+});
