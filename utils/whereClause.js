@@ -1,7 +1,7 @@
 /** @format */
 
 // base = product.find()
-// bigQ = search=coder&page=2&category=shortsleeves&rating[gte]=4&price[lte]=999&price[gte]=199
+// bigQ = search=coder&page=2&category=shortsleeves&rating[gte]=4&price[lte]=999&price[gte]=199&limit=2
 
 class WhereClause {
   constructor(base, bigQ) {
@@ -22,6 +22,22 @@ class WhereClause {
     this.base = this.base.find({ ...searchKeyWord });
 
     return this;
+  }
+
+  //   filtering product based on mongoDB Operators
+  filter() {
+    const copyQ = { ...this.bigQ };
+    delete copyQ["search"];
+    delete copyQ["limit"];
+    delete copyQ["page"];
+
+    // convert bigQ in string => copyQ
+    let stringofCopyQ = JSON.stringify(copyQ);
+    stringofCopyQ = stringofCopyQ.replace(/\b(gte|lte|gt|lt)/g, (m) => `$${m}`);
+
+    let jsonOfCopyQ = JSON.parse(stringofCopyQ);
+
+    this.base = this.base.find(jsonOfCopyQ);
   }
 
   pager(resultperPage) {
