@@ -40,7 +40,7 @@ const productSchema = new Schema({
       "Please select category from = short-sleeves,long-sleeves,sweat-shirts,hoodies",
     ],
     enum: {
-      values: ["short-sleeves", "long-sleeves", "sweat-shirt", "hoodies"],
+      values: ["shortsleeves", "longsleeves", "sweatshirt", "hoodies"],
       message:
         "Please select category only from = short-sleeves,long-sleeves,sweat-shirts,hoodies",
     },
