@@ -67,3 +67,16 @@ exports.getAllProducts = BigPromise(async (req, res, next) => {
     countTotalProduct,
   });
 });
+
+exports.admingetAllProducts = BigPromise(async (req, res, next) => {
+  const products = await Product.find();
+
+  if (!products) {
+    return next(new CustomError("NO products to display"));
+  }
+
+  res.status(200).json({
+    success: true,
+    products,
+  });
+});
