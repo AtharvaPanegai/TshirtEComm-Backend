@@ -8,6 +8,7 @@ const {
   createProduct,
   admingetAllProducts,
   getSingleProduct,
+  adminUdpateOneProduct,
 } = require("../controller/productController");
 const { isLoggedIn, customRole } = require("../middlewares/userMiddleware");
 
@@ -22,5 +23,9 @@ router
 router
   .route("/admin/products")
   .get(isLoggedIn, customRole("admin"), admingetAllProducts);
+
+router
+  .route("/admin/updateProduct/:id")
+  .post(isLoggedIn, customRole("admin"), adminUdpateOneProduct);
 
 module.exports = router;
