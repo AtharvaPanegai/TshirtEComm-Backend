@@ -7,10 +7,12 @@ const {
   getAllProducts,
   createProduct,
   admingetAllProducts,
+  getSingleProduct,
 } = require("../controller/productController");
 const { isLoggedIn, customRole } = require("../middlewares/userMiddleware");
 
 router.route("/products").get(getAllProducts);
+router.route("/getSingleProduct/:id").get(getSingleProduct);
 
 // admin routes
 router
