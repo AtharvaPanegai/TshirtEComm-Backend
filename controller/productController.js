@@ -96,7 +96,7 @@ exports.getSingleProduct = BigPromise(async (req, res, next) => {
 
 exports.adminUdpateOneProduct = BigPromise(async (req, res, next) => {
   // only admin can access this route
-  const product = await Product.find(req.params.id);
+  let product = await Product.findById(req.params.id);
 
   if (!product) {
     return next(new CustomError("No product Found", 404));
@@ -137,5 +137,26 @@ exports.adminUdpateOneProduct = BigPromise(async (req, res, next) => {
   res.status(200).json({
     success: true,
     product,
+  });
+});
+
+exports.admindeleteOneProduct = BigPromise(async (req, res, next) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    return next(new CustomError("No product found for this id"), 404);
+  }
+
+  // removing images from cloudinary
+  for (let index = 0; index < product.photos.length; index++) {
+    await cloudinary.v2.uploader.destroy(product.photos[index].id);
+  }
+
+  // remove product data from db
+  await product.remove();
+
+  res.status(200).json({
+    success: true,
+    message: "Product Deleted",
   });
 });
