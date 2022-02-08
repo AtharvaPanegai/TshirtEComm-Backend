@@ -16,6 +16,8 @@ const { isLoggedIn, customRole } = require("../middlewares/userMiddleware");
 router.route("/products").get(getAllProducts);
 router.route("/getSingleProduct/:id").get(getSingleProduct);
 
+
+
 // admin routes
 router
   .route("/admin/product/add")

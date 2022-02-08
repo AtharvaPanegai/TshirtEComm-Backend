@@ -94,6 +94,56 @@ exports.getSingleProduct = BigPromise(async (req, res, next) => {
   });
 });
 
+exports.addReview = BigPromise(async (req, res, next) => {
+  // taking the information from front end for a review
+  const { rating, comment, productId } = req.body;
+
+  // creating an Object to push a review
+  const review = {
+    user: req.user._id,
+    name: req.user.name,
+    rating: Number(rating),
+    comment,
+  };
+
+  // find a product on which review is done
+
+  const product = await Product.findById(productId);
+
+  // check if the user has already reviewed product
+  const alreadyReviewed = product.reviews.find((rev) => {
+    rev.user.toString() === req.user._id.toString();
+  });
+
+  // depending upon the already reviewed
+
+  if (alreadyReviewed) {
+    product.reviews.forEach((review) => {
+      if (review.user.toString() === req.user._id.toString()) {
+        review.comment = comment;
+        review.rating = rating;
+      }
+    });
+  } else {
+    product.reviews.push(review);
+    product.numberOfReviews = product.reviews.length;
+  }
+
+  // adjust rating according all ratings
+  product.ratings =
+    product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    product.reviews.length;
+
+  await product.save({
+    validateBeforeSave: false,
+  });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+
 exports.adminUdpateOneProduct = BigPromise(async (req, res, next) => {
   // only admin can access this route
   let product = await Product.findById(req.params.id);
