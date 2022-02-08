@@ -143,7 +143,51 @@ exports.addReview = BigPromise(async (req, res, next) => {
   });
 });
 
+exports.deleteReview = BigPromise(async (req, res, next) => {
+  const { productId } = req.query;
 
+  const product = await Product.findById(productId);
+
+  const reviews = product.reviews.filter(
+    (rev) => rev.user.toString() === req.user._id.toString()
+  );
+
+  const numberOfReviews = reviews.length;
+
+  product.ratings =
+    product.reviews.reduce((acc, item) => item.rating + acc) /
+    product.reviews.length;
+
+  // update the product
+  await Product.findByIdAndUpdate(
+    productId,
+    {
+      reviews,
+      ratings,
+      numberOfReviews,
+    },
+    {
+      new: true,
+      useFindAndModify: false,
+      runValidators: true,
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+exports.getOnlyReviewsForOneProduct = BigPromise(async (req, res, next) => {
+  const product = await Product.findById(req.query.id);
+
+  res.status(200).json({
+    success: true,
+    reviews: product.reviews,
+  });
+});
+
+// admin Controller
 exports.adminUdpateOneProduct = BigPromise(async (req, res, next) => {
   // only admin can access this route
   let product = await Product.findById(req.params.id);
