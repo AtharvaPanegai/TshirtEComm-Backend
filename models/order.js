@@ -87,8 +87,8 @@ const orderSchema = new Schema({
     type: Date,
   },
   createdAt: {
-    type: Date.now,
-    required: true,
+    type: Date,
+    default: Date.now,
   },
 });
 
