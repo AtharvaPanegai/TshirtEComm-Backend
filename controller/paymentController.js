@@ -1,6 +1,6 @@
 /** @format */
 
-const { BigPromise } = require("../middlewares/bigPromise");
+const BigPromise = require("../middlewares/bigPromise");
 const stripe = require("stripe")(process.env.STRIPE_SECKEY);
 
 exports.sendStripeKey = BigPromise(async (req, res, next) => {

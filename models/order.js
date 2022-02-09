@@ -14,11 +14,11 @@ const orderSchema = new Schema({
       required: true,
     },
     phoneNumber: {
-      type: Number,
+      type: String,
       required: true,
     },
     postalCode: {
-      type: Number,
+      type: String,
       required: true,
     },
     state: {
@@ -81,7 +81,6 @@ const orderSchema = new Schema({
   },
   orderStatus: {
     type: String,
-    required: true,
   },
   deliveredOn: {
     type: Date,
