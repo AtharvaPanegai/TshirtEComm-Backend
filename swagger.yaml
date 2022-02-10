@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   title: Tshirt store API
-  description: LCO - a course to create API for ecomm store
+  description: API for ecomm store
   version: 1.1.0
   contact:
     email: atharvaapanegai@gmail.com
