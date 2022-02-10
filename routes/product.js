@@ -32,11 +32,9 @@ router
   .get(isLoggedIn, customRole("admin"), admingetAllProducts);
 
 router
-  .route("/admin/updateProduct/:id")
-  .post(isLoggedIn, customRole("admin"), adminUdpateOneProduct);
+  .route("/admin/product/:id")
+  .post(isLoggedIn, customRole("admin"), adminUdpateOneProduct)
+  .delete(isLoggedIn, customRole("admin"), admindeleteOneProduct);
 
-router
-  .route("/admin/deleteOneProduct/:id")
-  .get(isLoggedIn, customRole("admin"), admindeleteOneProduct);
 
 module.exports = router;
