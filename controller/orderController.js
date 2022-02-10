@@ -46,3 +46,16 @@ exports.getOneOrder = BigPromise(async (req, res, next) => {
     order,
   });
 });
+
+exports.getLoggedInUserOrders = BigPromise(async (req, res, next) => {
+  const order = await Order.find({ user: req.user });
+
+  if (!order) {
+    return next(new CustomError("Please Provide valid order", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
