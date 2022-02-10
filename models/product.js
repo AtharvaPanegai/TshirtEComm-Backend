@@ -45,6 +45,10 @@ const productSchema = new Schema({
         "Please select category only from = short-sleeves,long-sleeves,sweat-shirts,hoodies",
     },
   },
+  stock: {
+    type: Number,
+    required: [true, "Please add stock"],
+  },
   brand: {
     type: String,
     required: [true, "Please provide a brandname"],
