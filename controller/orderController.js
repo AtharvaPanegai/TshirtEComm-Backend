@@ -68,3 +68,20 @@ exports.admingetAllOrders = BigPromise(async (req, res, next) => {
     orders,
   });
 });
+
+exports.adminUpdateOrder = BigPromise(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  // admin cant change the status if the order is already delivered
+  if (order.orderStatus === "delivered") {
+    return next(new CustomError("Order is already marked for delivery", 401));
+  }
+
+  order.orderStatus = req.body.orderStatus;
+  await order.save();
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
